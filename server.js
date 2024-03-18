@@ -7,7 +7,7 @@ const app = express();
 // Define the URLs of your websites to monitor
 const websiteUrls = [
     'https://chatbison.onrender.com/',
-    'https://pingit.onrender.com'
+    '/'
     // Add more website URLs as needed
 ];
 
