@@ -6,7 +6,8 @@ const app = express();
 
 // Define the URLs of your websites to monitor
 const websiteUrls = [
-    'https://ai-tutor-be.onrender.com/',
+    //'https://ai-tutor-be.onrender.com/',
+    'https://chatbison.onrender.com/',
     'https://pingit-9cj7.onrender.com/'
     // Add more website URLs as needed
 ];
