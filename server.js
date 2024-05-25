@@ -25,8 +25,8 @@ const pingWebsite = (websiteUrl) => {
     const req = protocol.request(websiteUrl, options, (res) => {
         var randomInterval;
 
-        // Generate a random time interval between 1 to 5 minutes (60000 milliseconds = 1 minute)
-        randomInterval = Math.floor(Math.random() * (5 * 60000 - 1 * 60000 + 1)) + 1 * 60000;
+        // Generate a random time interval between 1 to 3 minutes (60000 milliseconds = 1 minute)
+        randomInterval = Math.floor(Math.random() * (3 * 60000 - 1 * 60000 + 1)) + 1 * 60000;
         setTimeout(() => pingWebsite(websiteUrl), randomInterval);
 
         if (res.statusCode === 200) {
