@@ -27,7 +27,7 @@ const pingWebsite = (websiteUrl) => {
         var randomInterval;
 
         // Generate a random time interval between 1 to 3 minutes (60000 milliseconds = 1 minute)
-        randomInterval = Math.floor(Math.random() * (3 * 60000 - 1 * 60000 + 1)) + 1 * 60000;
+        randomInterval = Math.floor(Math.random() * (2 * 60000 - 1 * 60000 + 1)) + 1 * 60000;
         setTimeout(() => pingWebsite(websiteUrl), randomInterval);
 
         if (res.statusCode === 200) {
