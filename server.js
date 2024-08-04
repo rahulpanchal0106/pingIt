@@ -1,16 +1,15 @@
 const express = require('express');
 const http = require('http');
 const https = require('https');
-
+require('dotenv').config();
 const app = express();
 
 // Define the URLs of your websites to monitor
 const websiteUrls = [
+    process.env.PROD,
     'https://chatbison.onrender.com/',
-    //'https://ai-tutor-be.onrender.com/',
-    'https://foxus-ai-be.onrender.com/',
-    'https://pingit-9cj7.onrender.com/'
-    // Add more website URLs as needed
+    'https://socio-server-01re.onrender.com'
+    
 ];
 
 // Function to ping a website with a random interval
@@ -47,20 +46,17 @@ const pingWebsite = (websiteUrl) => {
     req.end();
 };
 
-// Function to ping all websites
 const pingAllWebsites = () => {
     websiteUrls.forEach((url) => {
         pingWebsite(url);
     });
 };
 
-// Function to get current time in readable format
 const getCurrentTime = () => {
     const currentTime = new Date();
     return currentTime.toLocaleString();
 };
 
-// Endpoint to check the status of the monitor
 app.get('/', (req, res) => {
     res.send('Website monitor is running!');
 });
@@ -70,5 +66,4 @@ app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
 });
 
-// Initial ping of all websites on startup
 pingAllWebsites();
