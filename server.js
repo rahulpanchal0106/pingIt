@@ -142,6 +142,9 @@ app.get('/', (req, res) => {
                 margin:0px;
                 padding:0px;
             }
+            *{
+                font-family:system-ui;
+            }
             body{
                 margin:0px;
                 padding:0px;
@@ -158,22 +161,122 @@ app.get('/', (req, res) => {
                 justify-content:center;
                 align-items:center;
             }
+            #card-in{
+                width: 50%;
+                
+                padding:30px 20px;
+                border-radius: 10px;
+                background: #e0e0e0;
+                box-shadow: 20px 20px 60px #bebebe,-20px -20px 60px #ffffff;
+                display:flex;
+                flex-direction:column;
+                justify-content:center;
+                align-items:center;
+            }
+                /* HTML: <div class="loader"></div> */
+            .loader-fine {
+            width: 20px;
+            aspect-ratio: 1;
+            border-radius: 50%;
+            background: #5ed75e;
+            box-shadow: 0 0 0 0 #5ed75e;
+            animation: l2 1.5s infinite linear;
+            position: relative;
+            top: -33%;
+            left: 50%;
+            }
+            .loader-err {
+            width: 20px;
+            aspect-ratio: 1;
+            border-radius: 50%;
+            background: tomato;
+            box-shadow: 0 0 0 0 tomato;
+            animation: l2 1.5s infinite linear;
+            position: relative;
+            top: -30%;
+            left: 50%;
+            }
+            .loader-fine:before,
+            .loader-fine:after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            border-radius: inherit;
+            box-shadow: 0 0 0 0 #5ed75e;
+            animation: inherit;
+            animation-delay: -0.5s;
+            }
+            .loader-fine:after {
+            animation-delay: -1s;
+            }
+            @keyframes l2 {
+                100% {box-shadow: 0 0 0 40px #0000}
+            }
+
+            #info{
+                background-color: #c8c8c8;
+                padding: 10px 15px;
+                border-radius: 7px;
+                margin-bottom:10px;
+                width:70%;
+            }
+            #info-p{
+                color: #6c6b6b;
+                font-size: 0.6rem;
+                margin: 0px;
+            }   
         </style>
         <body>
             <div id="container" style=" padding:0px;margin:0px;width:100vw; height:100vh; display:flex;justify-content:space-evenly; align-items:center; flex-direction:column; background-color:#f6f6f6">
+                <p>PingIt service is live! </p>
                 ${
                     websiteUrls.map((server)=>{
                         
-                        return(`
+                        return `
                             <div id="card">
-                                ${server.url} | ${
-                                    server && server.about && server.about.length > 0 
-                                        ? server.about[server.about.length - 1].status?"🟢" :"🔴"
-                                        : 'No data available'
-                                } 
+                                <h3 style="margin:0px">
+                                    ${server.url}  
+                                </h3>
+                                ${
+                          server && server.about && server.about.length > 0
+                            ? server.about[server.about.length - 1].status
+                              ? `
+                                <div class="loader-fine"></div>
+                                
+                                <div id="info">
+                                    <p id="info-p" >Last checked at</p>
+                                    ${
+                                        server.about[server.about.length - 1].time
+                                    }
+                                </div>
+                                <div id="info">
+                                    <p id="info-p">Next check after</p>
+                                    ${
+                                        server.about[server.about.length - 1].upnext
+                                    } m
+                                </div>
+                                
+                              `
+                              : `
+                                <div class="loader-err"></div>
+                                <div id="info">
+                                    <p id="info-p" >Last ping at</p>
+                                    ${
+                                        server.about[server.about.length - 1].time
+                                    }
+                                </div>
+                                <div id="info">
+                                    <p id="info-p">Next ping after</p>
+                                    ${
+                                        server.about[server.about.length - 1].upnext
+                                    } m
+                                </div>
+                              `
+                            : "No data available"
+                        } 
 
                             </div>    
-                        `)
+                        `;
                     })
                 }
             </div>
