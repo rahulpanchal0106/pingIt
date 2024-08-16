@@ -2,13 +2,21 @@ const express = require('express');
 const http = require('http');
 const https = require('https');
 const nodemailer = require('nodemailer');
+const path = require('path');
+const html = require('./script');
 require('dotenv').config();
 const app = express();
 
 // Define the URLs of your websites to monitor
 const websiteUrls = [
-    process.env.PROD,
-    process.env.foxusai
+    {
+        url:process.env.PROD,
+        about:[]
+    },
+    {
+        url:process.env.foxusai,
+        about:[]
+    }
 ];
 
 // Email transporter configuration
@@ -66,8 +74,10 @@ const sendEmailNotification = (websiteUrl, statusCode, errorMessage = null) => {
     });
 };
 
+const data_arr = []
+
 // Function to ping a website with a random interval
-const pingWebsite = (websiteUrl) => {
+const pingWebsite = (websiteUrl,index) => {
     const protocol = websiteUrl.startsWith('https') ? https : http;
     const options = {
         method: 'GET',
@@ -78,31 +88,44 @@ const pingWebsite = (websiteUrl) => {
 
     const req = protocol.request(websiteUrl, options, (res) => {
         const randomInterval = Math.floor(Math.random() * (2 * 60000 - 1 * 60000 + 1)) + 1 * 60000;
-
+        // const randomInterval = Math.floor(Math.random() * (2 * 1000 - 1 * 1000 + 1)) + 1 * 1000;
+        var isUp=false;
         if (res.statusCode === 200) {
             const time = new Date();
+            isUp=true;
             console.log(`${time.toLocaleString()}: Website ${websiteUrl} is UP, next check after ${randomInterval / 60000}m.`);
         } else {
+            isUp=false;
             console.log(`[${getCurrentTime()}] Website ${websiteUrl} is DOWN. Status code: ${res.statusCode}, next check after ${randomInterval / 60000}m.`);
             sendEmailNotification(websiteUrl, res.statusCode);
         }
         console.log("\n--------------------------------\n");
+        websiteUrls[index].about.push(
+            {
+                time: new Date().toLocaleString(),
+                upnext:randomInterval/60000,
+                status:isUp
+            }
+        )
         
-        setTimeout(() => pingWebsite(websiteUrl), randomInterval);
+        setTimeout(() => pingWebsite(websiteUrl,index), randomInterval);
+        return 
     });
 
     req.on('error', (error) => {
-        console.error(`Error pinging website ${websiteUrl}: ${error.message}`);
+        console.error(`Error pinging ${websiteUrl}: ${error.message}`);
         sendEmailNotification(websiteUrl, null, error.message);
-        setTimeout(() => pingWebsite(websiteUrl), 1 * 60000);
+        setTimeout(() => pingWebsite(websiteUrl,index), 1 * 60000);
     });
 
     req.end();
 };
 
 const pingAllWebsites = () => {
-    websiteUrls.forEach((url) => {
-        pingWebsite(url);
+    
+    websiteUrls.forEach((url,index) => {
+        data=pingWebsite(url.url,index); 
+        
     });
 };
 
@@ -112,7 +135,51 @@ const getCurrentTime = () => {
 };
 
 app.get('/', (req, res) => {
-    res.send('Website monitor is running!');
+    // res.sendFile(path.join(__dirname,'index.html'));
+    res.send(`
+        <style>
+            html{
+                margin:0px;
+                padding:0px;
+            }
+            body{
+                margin:0px;
+                padding:0px;
+            }
+            #card{
+                width: 50%;
+                height: 20vh;
+                padding:30px 20px;
+                border-radius: 50px;
+                background: #e0e0e0;
+                box-shadow: 20px 20px 60px #bebebe,-20px -20px 60px #ffffff;
+                display:flex;
+                flex-direction:column;
+                justify-content:center;
+                align-items:center;
+            }
+        </style>
+        <body>
+            <div id="container" style=" padding:0px;margin:0px;width:100vw; height:100vh; display:flex;justify-content:space-evenly; align-items:center; flex-direction:column; background-color:#f6f6f6">
+                ${
+                    websiteUrls.map((server)=>{
+                        
+                        return(`
+                            <div id="card">
+                                ${server.url} | ${
+                                    server && server.about && server.about.length > 0 
+                                        ? server.about[server.about.length - 1].status?"🟢" :"🔴"
+                                        : 'No data available'
+                                } 
+
+                            </div>    
+                        `)
+                    })
+                }
+            </div>
+        </body>
+        `)
+    // res.send(html())
 });
 
 const PORT = process.env.PORT || 3000;
@@ -121,3 +188,4 @@ app.listen(PORT, () => {
 });
 
 pingAllWebsites();
+
