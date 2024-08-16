@@ -24,16 +24,37 @@ const transporter = nodemailer.createTransport({
 
 // Function to send email notifications
 const sendEmailNotification = (websiteUrl, statusCode, errorMessage = null) => {
-    const subject = `Website ${websiteUrl} is DOWN!`;
+    const subject = `Server Went Down`;
     const message = errorMessage
         ? `An error occurred while pinging ${websiteUrl}: ${errorMessage}`
-        : `Website ${websiteUrl} is DOWN. Status code: ${statusCode}`;
+        : `Web Service ${websiteUrl} is DOWN. 
+        Status code: ${statusCode}`;
 
     const mailOptions = {
         from: `"PingIt" <${process.env.EMAIL_USER}>`,
         to: process.env.EMAIL_TO,
         subject: subject,
-        text: message
+        // text: message,
+        html: 
+        `<!DOCTYPE html>
+        <html lang="en">
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        </head>
+        <body style="font-family: Arial, sans-serif; margin: 0; padding: 0; background-color: #f4f4f4;">
+            <div style="width: 90%; max-width: 600px; margin: auto; background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);">
+                <h1 style="color: #333;">Your server is in trouble</h1>
+                <p style="color: #666;">An error occurred while pinging, <strong>${websiteUrl}</strong></p>
+                <p style="color: #666;">Web Service <strong>${websiteUrl}</strong> is <strong>Not Responding</strong> 🔴.</p><p> Status code: <strong>${statusCode}</strong></p>
+                <div style="margin-top: 20px; font-size: 0.8em; color: #999; text-align: right;">
+                    <p>Go fix it! ASAP!</p>
+                    <p>Good Luck,</p>
+                    <p><a href="https://pingit-foxus-ai.onrender.com" style="color: #007bff; text-decoration: none;">PingIt</a></p>
+                </div>
+            </div>
+        </body>
+        </html>`
     };
 
     transporter.sendMail(mailOptions, (error, info) => {
