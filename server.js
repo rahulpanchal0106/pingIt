@@ -7,7 +7,7 @@ const app = express();
 // Define the URLs of your websites to monitor
 const websiteUrls = [
     process.env.PROD,
-    'https://foxus-ai-backend.onrender.com'
+    process.env.foxusai
 ];
 
 // Function to ping a website with a random interval
