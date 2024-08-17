@@ -8,7 +8,7 @@ const app = express();
 const websiteUrls = [
     process.env.PROD,
     'https://chatbison.onrender.com/',
-    'https://socio-server-01re.onrender.com'
+    'https://socio-server-wo58.onrender.com'
     
 ];
 
