@@ -7,7 +7,6 @@ const app = express();
 // Define the URLs of your websites to monitor
 const websiteUrls = [
     process.env.PROD,
-    'https://chatbison.onrender.com/',
     'https://socio-server-wo58.onrender.com'
     
 ];
